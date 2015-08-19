@@ -12,7 +12,7 @@ var parseStyle = function(style){
 };
 var parseDOM = function(el){
     if(!el.tagName){
-        return "'" + el.textContent.replace(/(\r\n|\n|\r)/gm," ") + "'";
+        return JSON.stringify(el.textContent);
     }
     var attributes = {};
     for(var i = 0; i < el.attributes.length; i++){
