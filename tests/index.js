@@ -55,7 +55,6 @@ describe("dom2hscript", function() {
       input = dom2hscript.parseHTML(html);
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple classes");
-      console.log(output.outerHTML);
       
     });
 
@@ -68,8 +67,27 @@ describe("dom2hscript", function() {
       input = dom2hscript.parseHTML(html);
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple styles");
-      console.log(output.outerHTML);
       
+    });
+
+    it("should parse nested html to hyperscript", function() {
+      var html = '<div style="color: red;"><a href="#test">Hello world</a></div>';
+      var input = dom2hscript.parseHTML(html);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal(html,"a single child");
+      var html = '<div style="color: red;">'+ 
+        '<ul><li><a href="#test">Hello world</a></li>' + 
+        '<li><a href="#test">Hello world</a></li></ul></div>';
+      input = dom2hscript.parseHTML(html);
+      output = eval(input);
+      expect(output.outerHTML).to.be.equal(html,"multiple children");
+    });
+
+    it("should ignore invalid html", function() {
+      var html = '<div style="color: red;" asdasd=2><a href="#test">Hello world</a></div>';
+      var input = dom2hscript.parseHTML(html,true);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal('<div style="color: red;"><a href="#test">Hello world</a></div>',"a single child");
     });
 
     
