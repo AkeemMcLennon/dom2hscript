@@ -14,14 +14,6 @@ var parseDOM = function(el){
     if(!el.tagName){
         return "'" + el.textContent + "'";
     }
-    var output = "h('" + el.tagName;
-    if(el.id){
-      output = output +'#'+ el.id;
-    }
-    if(el.className){
-      output = output +'.'+ el.className.replace(/ /g,".");
-    }
-    output += "',";
     var attributes = {};
     for(var i = 0; i < el.attributes.length; i++){
       var attr = el.attributes[i];
@@ -29,11 +21,21 @@ var parseDOM = function(el){
         if(attr.name == "style"){
           attributes.style = parseStyle(attr.value);
         }
-        else if(attr.name != "id" && attr.name != "class"){
+        else{
           attributes[attr.name] = attr.value;
         }
       }
     }
+    var output = "h('" + el.tagName;
+    if(attributes.id){
+      output = output +'#'+ attributes.id;
+      delete attributes.id;
+    }
+    if(attributes.class){
+      output = output +'.'+ attributes.class.replace(/ /g,".");
+      delete attributes.class;
+    }
+    output += "',";
     output += JSON.stringify(attributes);
     var children = [];
     output += ',[';
