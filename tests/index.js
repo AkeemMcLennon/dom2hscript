@@ -83,6 +83,13 @@ describe("dom2hscript", function() {
       expect(output.outerHTML).to.be.equal(html,"multiple children");
     });
 
+    it("should parse body tags to hyperscript", function() {
+      var html = '<body><div style="color: red;"><a href="#test">Hello world</a></div></body>';
+      var input = dom2hscript.parseHTML(html);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal(html);
+    });
+
     it("should ignore invalid html", function() {
       var html = '<div style="color: red;" asdasd=2><a href="#test">Hello world</a></div>';
       var input = dom2hscript.parseHTML(html,true);

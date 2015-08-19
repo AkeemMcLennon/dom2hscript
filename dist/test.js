@@ -466,7 +466,15 @@ if(!window.DOMParser){
 }(DOMParser));
 parser = new DOMParser();
 module.exports = function(html,strictChecking){
-  var el = parser.parseFromString(html,'text/html').getElementsByTagName('body')[0].firstChild;
+  var result = parser.parseFromString(html,'text/html');
+  var el;
+  // Determine if we're interested in the body or just inside
+  if(html.substring(0,10).match(/\<body.+/ig)){
+    el = result.getElementsByTagName('body')[0];
+  }
+  else{
+    el = result.getElementsByTagName('body')[0].firstChild;
+  }
   var errors = el.getElementsByTagName('parsererror');
   if(errors && errors.length > 0){
     if(strictChecking === true){
@@ -536,7 +544,6 @@ describe("dom2hscript", function() {
       input = dom2hscript.parseHTML(html);
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple classes");
-      console.log(output.outerHTML);
       
     });
 
@@ -549,7 +556,6 @@ describe("dom2hscript", function() {
       input = dom2hscript.parseHTML(html);
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple styles");
-      console.log(output.outerHTML);
       
     });
 
@@ -564,6 +570,13 @@ describe("dom2hscript", function() {
       input = dom2hscript.parseHTML(html);
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple children");
+    });
+
+    it("should parse body tags to hyperscript", function() {
+      var html = '<body><div style="color: red;"><a href="#test">Hello world</a></div></body>';
+      var input = dom2hscript.parseHTML(html);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal(html);
     });
 
     it("should ignore invalid html", function() {

@@ -41,7 +41,15 @@ if(!window.DOMParser){
 }(DOMParser));
 parser = new DOMParser();
 module.exports = function(html,strictChecking){
-  var el = parser.parseFromString(html,'text/html').getElementsByTagName('body')[0].firstChild;
+  var result = parser.parseFromString(html,'text/html');
+  var el;
+  // Determine if we're interested in the body or just inside
+  if(html.substring(0,10).match(/\<body.+/ig)){
+    el = result.getElementsByTagName('body')[0];
+  }
+  else{
+    el = result.getElementsByTagName('body')[0].firstChild;
+  }
   var errors = el.getElementsByTagName('parsererror');
   if(errors && errors.length > 0){
     if(strictChecking === true){
