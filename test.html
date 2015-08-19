@@ -13,9 +13,11 @@
       mocha.reporter('html');
       expect = chai.expect;
     </script>
+
     <script src="dist/test.js">
 
     </script>
+    <script src="dist/dom2hscript.js" ></script>
     <script>
       if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
       else { mocha.run(); }

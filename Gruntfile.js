@@ -20,8 +20,10 @@ module.exports = function gruntFile(grunt) {
           'dist/dom2hscript.js': ['index.js'],
           'dist/test.js': ['tests/index.js']
         },
-        browserifyOptions: {
-          standalone: true,
+        options: {
+          browserifyOptions: {
+            standalone: '<%= pkg.name %>'
+          }
         }
       },
     },

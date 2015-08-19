@@ -48,4 +48,4 @@ var parseHTML = function(html,strictChecking){
 };
 exports.parseDOM = parseDOM;
 exports.parseHTML = parseHTML;
-global.dom2hscript = exports;
+module.exports = exports;
