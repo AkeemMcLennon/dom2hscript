@@ -13,7 +13,7 @@ var parseStyle = function(style){
 };
 var parseDOM = function(el){
     if(!el.tagName){
-        return "'" + el.textContent + "'";
+        return "'" + el.textContent.replace(/(\r\n|\n|\r)/gm," ") + "'";
     }
     var attributes = {};
     for(var i = 0; i < el.attributes.length; i++){

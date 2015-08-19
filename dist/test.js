@@ -13,7 +13,7 @@ var parseStyle = function(style){
 };
 var parseDOM = function(el){
     if(!el.tagName){
-        return "'" + el.textContent + "'";
+        return "'" + el.textContent.replace(/(\r\n|\n|\r)/gm," ") + "'";
     }
     var attributes = {};
     for(var i = 0; i < el.attributes.length; i++){
@@ -584,6 +584,13 @@ describe("dom2hscript", function() {
       var input = dom2hscript.parseHTML(html,true);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal('<div style="color: red;"><a href="#test">Hello world</a></div>',"a single child");
+    });
+
+    it("should remove line breaks", function() {
+      var html = "<div>Hello \n world</a></div>";
+      var input = dom2hscript.parseHTML(html,true);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal('<div>Hello   world</div>',"a single child");
     });
 
     
