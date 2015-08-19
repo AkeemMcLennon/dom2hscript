@@ -12,8 +12,11 @@ var parseStyle = function(style){
   return output;
 };
 var parseDOM = function(el){
-    if(!el.tagName){
+    if(!el.tagName && el.nodeType === Node.TEXT_NODE){
         return JSON.stringify(el.textContent);
+    }
+    if(!el.attributes){
+      return;
     }
     var attributes = {};
     for(var i = 0; i < el.attributes.length; i++){

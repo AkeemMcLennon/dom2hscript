@@ -12,8 +12,11 @@ var parseStyle = function(style){
   return output;
 };
 var parseDOM = function(el){
-    if(!el.tagName){
+    if(!el.tagName && el.nodeType === Node.TEXT_NODE){
         return JSON.stringify(el.textContent);
+    }
+    if(!el.attributes){
+      return;
     }
     var attributes = {};
     for(var i = 0; i < el.attributes.length; i++){
@@ -584,6 +587,13 @@ describe("dom2hscript", function() {
       var input = dom2hscript.parseHTML(html,true);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal('<div style="color: red;"><a href="#test">Hello world</a></div>',"a single child");
+    });
+
+    it("should ignore comments", function() {
+      var html = '<div>Hello World<!-- Comment --></div>';
+      var input = dom2hscript.parseHTML(html,true);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal('<div>Hello World</div>',"a single child");
     });
 
     it("should parse document without errors", function() {
