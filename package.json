@@ -1,0 +1,30 @@
+{
+  "name": "dom2hscript",
+  "version": "0.0.1",
+  "description": "Parses html into hyperscript using the browser's built in DOMParser",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/karma/bin/karma start karma.conf.js --single-run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "chai": "^3.2.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.0",
+    "grunt-contrib-uglify": "^0.9.1",
+    "hyperscript": "^1.4.6",
+    "karma": "^0.13.9",
+    "karma-chai": "^0.1.0",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-mocha": "^0.2.0",
+    "karma-sinon": "^1.0.4",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twilson63/html2hscript.git"
+  },
+}
