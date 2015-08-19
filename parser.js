@@ -3,25 +3,9 @@ if(window.DOMParser){
   parser = new DOMParser();
 }
 else{
-  parser = {
-    parseFromString : function(markup, type) {
-      if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {
-        var
-          doc = document.implementation.createHTMLDocument("")
-        ;
-              if (markup.toLowerCase().indexOf('<!doctype') > -1) {
-                doc.documentElement.innerHTML = markup;
-              }
-              else {
-                doc.body.innerHTML = markup;
-              }
-        return doc;
-      } else {
-        return nativeParse.apply(this, arguments);
-      }
-    }
-  };
+  throw new Error("DOMParser required");
 }
+parser = new DOMParser();
 module.exports = function(html,strictChecking){
   var el = parser.parseFromString(html,'text/xml').firstChild;
   var errors = el.getElementsByTagName('parsererror');

@@ -15,14 +15,6 @@ var parseDOM = function(el){
     if(!el.tagName){
         return "'" + el.textContent + "'";
     }
-    var output = "h('" + el.tagName;
-    if(el.id){
-      output = output +'#'+ el.id;
-    }
-    if(el.className){
-      output = output +'.'+ el.className.replace(/ /g,".");
-    }
-    output += "',";
     var attributes = {};
     for(var i = 0; i < el.attributes.length; i++){
       var attr = el.attributes[i];
@@ -30,11 +22,21 @@ var parseDOM = function(el){
         if(attr.name == "style"){
           attributes.style = parseStyle(attr.value);
         }
-        else if(attr.name != "id" && attr.name != "class"){
+        else{
           attributes[attr.name] = attr.value;
         }
       }
     }
+    var output = "h('" + el.tagName;
+    if(attributes.id){
+      output = output +'#'+ attributes.id;
+      delete attributes.id;
+    }
+    if(attributes.class){
+      output = output +'.'+ attributes.class.replace(/ /g,".");
+      delete attributes.class;
+    }
+    output += "',";
     output += JSON.stringify(attributes);
     var children = [];
     output += ',[';
@@ -49,6 +51,8 @@ var parseHTML = function(html,strictChecking){
 };
 exports.parseDOM = parseDOM;
 exports.parseHTML = parseHTML;
+module.exports = exports;
+
 },{"./parser":7}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
@@ -424,25 +428,9 @@ if(window.DOMParser){
   parser = new DOMParser();
 }
 else{
-  parser = {
-    parseFromString : function(markup, type) {
-      if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {
-        var
-          doc = document.implementation.createHTMLDocument("")
-        ;
-              if (markup.toLowerCase().indexOf('<!doctype') > -1) {
-                doc.documentElement.innerHTML = markup;
-              }
-              else {
-                doc.body.innerHTML = markup;
-              }
-        return doc;
-      } else {
-        return nativeParse.apply(this, arguments);
-      }
-    }
-  };
+  throw new Error("DOMParser required");
 }
+parser = new DOMParser();
 module.exports = function(html,strictChecking){
   var el = parser.parseFromString(html,'text/xml').firstChild;
   var errors = el.getElementsByTagName('parsererror');
