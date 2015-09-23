@@ -1,7 +1,7 @@
 {
   "name": "dom2hscript",
-  "version": "0.2.0",
-  "description": "Parses html into hyperscript using the browser's built in DOMParser",
+  "version": "0.2.1",
+  "description": "A lightweight (2kb) html to hyperscript converter that uses the browser's built in DOM and CSS parser.",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/karma/bin/karma start karma.conf.js --single-run"
@@ -25,6 +25,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/twilson63/html2hscript.git"
+    "url": "https://github.com/AkeemMcLennon/dom2hscript.git"
   }
 }
