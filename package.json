@@ -1,6 +1,6 @@
 {
   "name": "dom2hscript",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A lightweight (2kb) html to hyperscript converter that uses the browser's built in DOM and CSS parser.",
   "main": "index.js",
   "scripts": {
