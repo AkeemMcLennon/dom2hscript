@@ -1,15 +1,14 @@
 var parser = require('./parser');
-var parseStyle = function(style){
-  var rules = style.split(";");
+var parseStyle = function(el){
+  var style = el.style;
   var output = {};
-  rules.forEach(function(rule){
-      var split = rule.split(":");
-      if(split.length == 2){
-          output[split[0].trim()] = split[1].trim();
-      }
-  });
+  for (var i = 0; i < style.length; ++i) {
+    var item = style.item(i);
+    output[item] = style[item];
+  }
   return output;
 };
+
 var parseDOM = function(el){
     if(!el.tagName && el.nodeType === Node.TEXT_NODE){
         return JSON.stringify(el.textContent);
@@ -22,7 +21,7 @@ var parseDOM = function(el){
       var attr = el.attributes[i];
       if(attr.name && attr.value){
         if(attr.name == "style"){
-          attributes.style = parseStyle(attr.value);
+          attributes.style = parseStyle(el);
         }
         else{
           attributes[attr.name] = attr.value;

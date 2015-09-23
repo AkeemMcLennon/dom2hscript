@@ -1,16 +1,15 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.dom2hscript = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var parser = require('./parser');
-var parseStyle = function(style){
-  var rules = style.split(";");
+var parseStyle = function(el){
+  var style = el.style;
   var output = {};
-  rules.forEach(function(rule){
-      var split = rule.split(":");
-      if(split.length == 2){
-          output[split[0].trim()] = split[1].trim();
-      }
-  });
+  for (var i = 0; i < style.length; ++i) {
+    var item = style.item(i);
+    output[item] = style[item];
+  }
   return output;
 };
+
 var parseDOM = function(el){
     if(!el.tagName && el.nodeType === Node.TEXT_NODE){
         return JSON.stringify(el.textContent);
@@ -23,7 +22,7 @@ var parseDOM = function(el){
       var attr = el.attributes[i];
       if(attr.name && attr.value){
         if(attr.name == "style"){
-          attributes.style = parseStyle(attr.value);
+          attributes.style = parseStyle(el);
         }
         else{
           attributes[attr.name] = attr.value;
