@@ -90,21 +90,21 @@ describe("dom2hscript", function() {
 
     it("should ignore invalid html", function() {
       var html = '<div style="color: red;" asdasd=2><a href="#test">Hello world</a></div>';
-      var input = dom2hscript.parseHTML(html,true);
+      var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal('<div style="color: red;"><a href="#test">Hello world</a></div>',"a single child");
     });
 
     it("should ignore comments", function() {
       var html = '<div>Hello World<!-- Comment --></div>';
-      var input = dom2hscript.parseHTML(html,true);
+      var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal('<div>Hello World</div>',"a single child");
     });
 
     it("should parse document without errors", function() {
       var html = "<div>Hello \n world's fair " + '"ok"</div>';
-      var input = dom2hscript.parseHTML(html,true);
+      var input = dom2hscript.parseHTML(html);
       var output = eval(input);
     });
 

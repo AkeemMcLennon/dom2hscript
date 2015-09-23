@@ -47,8 +47,8 @@ var parseDOM = function(el){
     output += "])";
     return output;
 };
-var parseHTML = function(html,strictChecking){
-  return parseDOM(parser(html,strictChecking));
+var parseHTML = function(html){
+  return parseDOM(parser(html));
 };
 exports.parseDOM = parseDOM;
 exports.parseHTML = parseHTML;
