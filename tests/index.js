@@ -3,17 +3,6 @@ var dom2hscript = require('../index');
 var h = require('hyperscript');
 describe("dom2hscript", function() {
 
-  beforeEach(function() {
-    // if(document.querySelector("#tokenarea")){
-    //   token = document.querySelector("#tokenarea").value.trim();
-    // }
-    // else{
-    //   token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0IjoibXljb21wYW55IiwiZCI6ImFrZWVtLmRldi5zdXBwb3J0LmNvbSIsInBybSI6WyJsb2c6KiIsInNlc3Npb246Y29ubmVjdCJdLCJqdGkiOiJjMzU2OTFiOS02NzE0LTQ3NzktOGZkYy0yM2YwYTA0YjZkZDMiLCJhcHAiOiJUZXN0IiwidmVyIjoiMS4wIiwicGx0IjoiQW5kcm9pZCIsImlhdCI6MTQzNzc2MTIyNywiYXVkIjpbImFwcCJdLCJpc3MiOiJTdXBwb3J0LmNvbSJ9.u-KS8K8ENCHhI8MDEp7OOHDVfS-ArqmzTOhZaZEmoI8";
-    // }
-    // core.setToken(token);
-    // storage.clear();
-  });
-
   describe("parseHTML()", function() {
 
     it("return same html from hyperscript", function() {
