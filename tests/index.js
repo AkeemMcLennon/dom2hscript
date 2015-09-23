@@ -59,6 +59,15 @@ describe("dom2hscript", function() {
       
     });
 
+    it("should parse data attributes from html to hyperscript", function() {
+      var html = '<div data-test="foo">Hello world</div>';
+      var input = dom2hscript.parseHTML(html);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal(html,"a single attribute");
+
+    });
+
+
     it("should parse nested html to hyperscript", function() {
       var html = '<div style="color: red;"><a href="#test">Hello world</a></div>';
       var input = dom2hscript.parseHTML(html);
@@ -97,7 +106,6 @@ describe("dom2hscript", function() {
       var html = "<div>Hello \n world's fair " + '"ok"</div>';
       var input = dom2hscript.parseHTML(html,true);
       var output = eval(input);
-      console.log(output);
     });
 
     
