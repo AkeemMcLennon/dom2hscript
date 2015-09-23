@@ -1,6 +1,6 @@
 {
   "name": "dom2hscript",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Parses html into hyperscript using the browser's built in DOMParser",
   "main": "index.js",
   "scripts": {
