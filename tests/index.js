@@ -1,3 +1,4 @@
+var chai = require('chai');
 var expect = chai.expect;
 var dom2hscript = require('../index');
 var h = require('hyperscript');
@@ -48,18 +49,17 @@ describe("dom2hscript", function() {
     });
 
     it("should parse styles from html to hyperscript", function() {
-      var html = '<div style="color: red;">Hello world</div>';
+      var html = '<div style="color: red; ">Hello world</div>';
       var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"a single style");
-      html = '<div style="color: red; position: absolute;">Hello world</div>';
+      html = '<div style="color: red; position: absolute; ">Hello world</div>';
       input = dom2hscript.parseHTML(html);
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple styles");
       var background = 'data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7';
       input = dom2hscript.parseHTML('<div style="background-image: url(\'' + background + '\')">test</div>');
       output = eval(input);
-      console.log(output.outerHTML);
       expect(output.outerHTML.indexOf(background)).to.not.equal(-1,"base64 encoded image");
 
     });
@@ -74,11 +74,11 @@ describe("dom2hscript", function() {
 
 
     it("should parse nested html to hyperscript", function() {
-      var html = '<div style="color: red;"><a href="#test">Hello world</a></div>';
+      var html = '<div style="color: red; "><a href="#test">Hello world</a></div>';
       var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"a single child");
-      var html = '<div style="color: red;">'+ 
+      var html = '<div style="color: red; ">'+ 
         '<ul><li><a href="#test">Hello world</a></li>' + 
         '<li><a href="#test">Hello world</a></li></ul></div>';
       input = dom2hscript.parseHTML(html);
@@ -87,17 +87,17 @@ describe("dom2hscript", function() {
     });
 
     it("should parse body tags to hyperscript", function() {
-      var html = '<body><div style="color: red;"><a href="#test">Hello world</a></div></body>';
+      var html = '<body><div style="color: red; "><a href="#test">Hello world</a></div></body>';
       var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal(html);
     });
 
     it("should ignore invalid html", function() {
-      var html = '<div style="color: red;" asdasd=2><a href="#test">Hello world</a></div>';
+      var html = '<div style="color: red; " asdasd=2><a href="#test">Hello world</a></div>';
       var input = dom2hscript.parseHTML(html);
       var output = eval(input);
-      expect(output.outerHTML).to.be.equal('<div style="color: red;"><a href="#test">Hello world</a></div>',"a single child");
+      expect(output.outerHTML).to.be.equal('<div style="color: red; "><a href="#test">Hello world</a></div>',"a single child");
     });
 
     it("should ignore comments", function() {

@@ -22,7 +22,7 @@ npm install dom2hscript
 
 ## Test
 
-This project using karma / mocha tests on Firefox (default supported by Travis CI). 
+This project is using mocha tests run through mochify (browserify + phantomjs)
 
 ``` sh
 npm test
