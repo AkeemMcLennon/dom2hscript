@@ -48,8 +48,8 @@ var parseDOM = function(el){
     output += "])";
     return output;
 };
-var parseHTML = function(html,strictChecking){
-  return parseDOM(parser(html,strictChecking));
+var parseHTML = function(html){
+  return parseDOM(parser(html));
 };
 exports.parseDOM = parseDOM;
 exports.parseHTML = parseHTML;
@@ -58,215 +58,6 @@ module.exports = exports;
 },{"./parser":7}],2:[function(require,module,exports){
 
 },{}],3:[function(require,module,exports){
-/*!
- * Cross-Browser Split 1.1.1
- * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
- * Available under the MIT License
- * ECMAScript compliant, uniform cross-browser split method
- */
-
-/**
- * Splits a string into an array of strings using a regex or string separator. Matches of the
- * separator are not included in the result array. However, if `separator` is a regex that contains
- * capturing groups, backreferences are spliced into the result each time `separator` is matched.
- * Fixes browser bugs compared to the native `String.prototype.split` and can be used reliably
- * cross-browser.
- * @param {String} str String to split.
- * @param {RegExp|String} separator Regex or string to use for separating the string.
- * @param {Number} [limit] Maximum number of items to include in the result array.
- * @returns {Array} Array of substrings.
- * @example
- *
- * // Basic use
- * split('a b c d', ' ');
- * // -> ['a', 'b', 'c', 'd']
- *
- * // With limit
- * split('a b c d', ' ', 2);
- * // -> ['a', 'b']
- *
- * // Backreferences in result array
- * split('..word1 word2..', /([a-z]+)(\d+)/i);
- * // -> ['..', 'word', '1', ' ', 'word', '2', '..']
- */
-module.exports = (function split(undef) {
-
-  var nativeSplit = String.prototype.split,
-    compliantExecNpcg = /()??/.exec("")[1] === undef,
-    // NPCG: nonparticipating capturing group
-    self;
-
-  self = function(str, separator, limit) {
-    // If `separator` is not a regex, use `nativeSplit`
-    if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
-      return nativeSplit.call(str, separator, limit);
-    }
-    var output = [],
-      flags = (separator.ignoreCase ? "i" : "") + (separator.multiline ? "m" : "") + (separator.extended ? "x" : "") + // Proposed for ES6
-      (separator.sticky ? "y" : ""),
-      // Firefox 3+
-      lastLastIndex = 0,
-      // Make `global` and avoid `lastIndex` issues by working with a copy
-      separator = new RegExp(separator.source, flags + "g"),
-      separator2, match, lastIndex, lastLength;
-    str += ""; // Type-convert
-    if (!compliantExecNpcg) {
-      // Doesn't need flags gy, but they don't hurt
-      separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags);
-    }
-    /* Values for `limit`, per the spec:
-     * If undefined: 4294967295 // Math.pow(2, 32) - 1
-     * If 0, Infinity, or NaN: 0
-     * If positive number: limit = Math.floor(limit); if (limit > 4294967295) limit -= 4294967296;
-     * If negative number: 4294967296 - Math.floor(Math.abs(limit))
-     * If other: Type-convert, then use the above rules
-     */
-    limit = limit === undef ? -1 >>> 0 : // Math.pow(2, 32) - 1
-    limit >>> 0; // ToUint32(limit)
-    while (match = separator.exec(str)) {
-      // `separator.lastIndex` is not reliable cross-browser
-      lastIndex = match.index + match[0].length;
-      if (lastIndex > lastLastIndex) {
-        output.push(str.slice(lastLastIndex, match.index));
-        // Fix browsers whose `exec` methods don't consistently return `undefined` for
-        // nonparticipating capturing groups
-        if (!compliantExecNpcg && match.length > 1) {
-          match[0].replace(separator2, function() {
-            for (var i = 1; i < arguments.length - 2; i++) {
-              if (arguments[i] === undef) {
-                match[i] = undef;
-              }
-            }
-          });
-        }
-        if (match.length > 1 && match.index < str.length) {
-          Array.prototype.push.apply(output, match.slice(1));
-        }
-        lastLength = match[0].length;
-        lastLastIndex = lastIndex;
-        if (output.length >= limit) {
-          break;
-        }
-      }
-      if (separator.lastIndex === match.index) {
-        separator.lastIndex++; // Avoid an infinite loop
-      }
-    }
-    if (lastLastIndex === str.length) {
-      if (lastLength || !separator.test("")) {
-        output.push("");
-      }
-    } else {
-      output.push(str.slice(lastLastIndex));
-    }
-    return output.length > limit ? output.slice(0, limit) : output;
-  };
-
-  return self;
-})();
-
-},{}],4:[function(require,module,exports){
-// contains, add, remove, toggle
-var indexof = require('indexof')
-
-module.exports = ClassList
-
-function ClassList(elem) {
-    var cl = elem.classList
-
-    if (cl) {
-        return cl
-    }
-
-    var classList = {
-        add: add
-        , remove: remove
-        , contains: contains
-        , toggle: toggle
-        , toString: $toString
-        , length: 0
-        , item: item
-    }
-
-    return classList
-
-    function add(token) {
-        var list = getTokens()
-        if (indexof(list, token) > -1) {
-            return
-        }
-        list.push(token)
-        setTokens(list)
-    }
-
-    function remove(token) {
-        var list = getTokens()
-            , index = indexof(list, token)
-
-        if (index === -1) {
-            return
-        }
-
-        list.splice(index, 1)
-        setTokens(list)
-    }
-
-    function contains(token) {
-        return indexof(getTokens(), token) > -1
-    }
-
-    function toggle(token) {
-        if (contains(token)) {
-            remove(token)
-            return false
-        } else {
-            add(token)
-            return true
-        }
-    }
-
-    function $toString() {
-        return elem.className
-    }
-
-    function item(index) {
-        var tokens = getTokens()
-        return tokens[index] || null
-    }
-
-    function getTokens() {
-        var className = elem.className
-
-        return filter(className.split(" "), isTruthy)
-    }
-
-    function setTokens(list) {
-        var length = list.length
-
-        elem.className = list.join(" ")
-        classList.length = length
-
-        for (var i = 0; i < list.length; i++) {
-            classList[i] = list[i]
-        }
-
-        delete list[length]
-    }
-}
-
-function filter (arr, fn) {
-    var ret = []
-    for (var i = 0; i < arr.length; i++) {
-        if (fn(arr[i])) ret.push(arr[i])
-    }
-    return ret
-}
-
-function isTruthy(value) {
-    return !!value
-}
-
-},{"indexof":6}],5:[function(require,module,exports){
 var split = require('browser-split')
 var ClassList = require('class-list')
 require('html-element')
@@ -280,7 +71,11 @@ function context () {
     function item (l) {
       var r
       function parseClass (string) {
-        var m = split(string, /([\.#]?[a-zA-Z0-9_:-]+)/)
+        // Our minimal parser doesn’t understand escaping CSS special
+        // characters like `#`. Don’t use them. More reading:
+        // https://mathiasbynens.be/notes/css-escapes .
+
+        var m = split(string, /([\.#]?[^\s#.]+)/)
         if(/^\.|#/.test(m[1]))
           e = document.createElement('div')
         forEach(m, function (v) {
@@ -413,7 +208,216 @@ function isArray (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]'
 }
 
-},{"browser-split":3,"class-list":4,"html-element":2}],6:[function(require,module,exports){
+},{"browser-split":4,"class-list":5,"html-element":2}],4:[function(require,module,exports){
+/*!
+ * Cross-Browser Split 1.1.1
+ * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
+ * Available under the MIT License
+ * ECMAScript compliant, uniform cross-browser split method
+ */
+
+/**
+ * Splits a string into an array of strings using a regex or string separator. Matches of the
+ * separator are not included in the result array. However, if `separator` is a regex that contains
+ * capturing groups, backreferences are spliced into the result each time `separator` is matched.
+ * Fixes browser bugs compared to the native `String.prototype.split` and can be used reliably
+ * cross-browser.
+ * @param {String} str String to split.
+ * @param {RegExp|String} separator Regex or string to use for separating the string.
+ * @param {Number} [limit] Maximum number of items to include in the result array.
+ * @returns {Array} Array of substrings.
+ * @example
+ *
+ * // Basic use
+ * split('a b c d', ' ');
+ * // -> ['a', 'b', 'c', 'd']
+ *
+ * // With limit
+ * split('a b c d', ' ', 2);
+ * // -> ['a', 'b']
+ *
+ * // Backreferences in result array
+ * split('..word1 word2..', /([a-z]+)(\d+)/i);
+ * // -> ['..', 'word', '1', ' ', 'word', '2', '..']
+ */
+module.exports = (function split(undef) {
+
+  var nativeSplit = String.prototype.split,
+    compliantExecNpcg = /()??/.exec("")[1] === undef,
+    // NPCG: nonparticipating capturing group
+    self;
+
+  self = function(str, separator, limit) {
+    // If `separator` is not a regex, use `nativeSplit`
+    if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
+      return nativeSplit.call(str, separator, limit);
+    }
+    var output = [],
+      flags = (separator.ignoreCase ? "i" : "") + (separator.multiline ? "m" : "") + (separator.extended ? "x" : "") + // Proposed for ES6
+      (separator.sticky ? "y" : ""),
+      // Firefox 3+
+      lastLastIndex = 0,
+      // Make `global` and avoid `lastIndex` issues by working with a copy
+      separator = new RegExp(separator.source, flags + "g"),
+      separator2, match, lastIndex, lastLength;
+    str += ""; // Type-convert
+    if (!compliantExecNpcg) {
+      // Doesn't need flags gy, but they don't hurt
+      separator2 = new RegExp("^" + separator.source + "$(?!\\s)", flags);
+    }
+    /* Values for `limit`, per the spec:
+     * If undefined: 4294967295 // Math.pow(2, 32) - 1
+     * If 0, Infinity, or NaN: 0
+     * If positive number: limit = Math.floor(limit); if (limit > 4294967295) limit -= 4294967296;
+     * If negative number: 4294967296 - Math.floor(Math.abs(limit))
+     * If other: Type-convert, then use the above rules
+     */
+    limit = limit === undef ? -1 >>> 0 : // Math.pow(2, 32) - 1
+    limit >>> 0; // ToUint32(limit)
+    while (match = separator.exec(str)) {
+      // `separator.lastIndex` is not reliable cross-browser
+      lastIndex = match.index + match[0].length;
+      if (lastIndex > lastLastIndex) {
+        output.push(str.slice(lastLastIndex, match.index));
+        // Fix browsers whose `exec` methods don't consistently return `undefined` for
+        // nonparticipating capturing groups
+        if (!compliantExecNpcg && match.length > 1) {
+          match[0].replace(separator2, function() {
+            for (var i = 1; i < arguments.length - 2; i++) {
+              if (arguments[i] === undef) {
+                match[i] = undef;
+              }
+            }
+          });
+        }
+        if (match.length > 1 && match.index < str.length) {
+          Array.prototype.push.apply(output, match.slice(1));
+        }
+        lastLength = match[0].length;
+        lastLastIndex = lastIndex;
+        if (output.length >= limit) {
+          break;
+        }
+      }
+      if (separator.lastIndex === match.index) {
+        separator.lastIndex++; // Avoid an infinite loop
+      }
+    }
+    if (lastLastIndex === str.length) {
+      if (lastLength || !separator.test("")) {
+        output.push("");
+      }
+    } else {
+      output.push(str.slice(lastLastIndex));
+    }
+    return output.length > limit ? output.slice(0, limit) : output;
+  };
+
+  return self;
+})();
+
+},{}],5:[function(require,module,exports){
+// contains, add, remove, toggle
+var indexof = require('indexof')
+
+module.exports = ClassList
+
+function ClassList(elem) {
+    var cl = elem.classList
+
+    if (cl) {
+        return cl
+    }
+
+    var classList = {
+        add: add
+        , remove: remove
+        , contains: contains
+        , toggle: toggle
+        , toString: $toString
+        , length: 0
+        , item: item
+    }
+
+    return classList
+
+    function add(token) {
+        var list = getTokens()
+        if (indexof(list, token) > -1) {
+            return
+        }
+        list.push(token)
+        setTokens(list)
+    }
+
+    function remove(token) {
+        var list = getTokens()
+            , index = indexof(list, token)
+
+        if (index === -1) {
+            return
+        }
+
+        list.splice(index, 1)
+        setTokens(list)
+    }
+
+    function contains(token) {
+        return indexof(getTokens(), token) > -1
+    }
+
+    function toggle(token) {
+        if (contains(token)) {
+            remove(token)
+            return false
+        } else {
+            add(token)
+            return true
+        }
+    }
+
+    function $toString() {
+        return elem.className
+    }
+
+    function item(index) {
+        var tokens = getTokens()
+        return tokens[index] || null
+    }
+
+    function getTokens() {
+        var className = elem.className
+
+        return filter(className.split(" "), isTruthy)
+    }
+
+    function setTokens(list) {
+        var length = list.length
+
+        elem.className = list.join(" ")
+        classList.length = length
+
+        for (var i = 0; i < list.length; i++) {
+            classList[i] = list[i]
+        }
+
+        delete list[length]
+    }
+}
+
+function filter (arr, fn) {
+    var ret = []
+    for (var i = 0; i < arr.length; i++) {
+        if (fn(arr[i])) ret.push(arr[i])
+    }
+    return ret
+}
+
+function isTruthy(value) {
+    return !!value
+}
+
+},{"indexof":6}],6:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -494,17 +498,6 @@ var dom2hscript = require('../index');
 var h = require('hyperscript');
 describe("dom2hscript", function() {
 
-  beforeEach(function() {
-    // if(document.querySelector("#tokenarea")){
-    //   token = document.querySelector("#tokenarea").value.trim();
-    // }
-    // else{
-    //   token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0IjoibXljb21wYW55IiwiZCI6ImFrZWVtLmRldi5zdXBwb3J0LmNvbSIsInBybSI6WyJsb2c6KiIsInNlc3Npb246Y29ubmVjdCJdLCJqdGkiOiJjMzU2OTFiOS02NzE0LTQ3NzktOGZkYy0yM2YwYTA0YjZkZDMiLCJhcHAiOiJUZXN0IiwidmVyIjoiMS4wIiwicGx0IjoiQW5kcm9pZCIsImlhdCI6MTQzNzc2MTIyNywiYXVkIjpbImFwcCJdLCJpc3MiOiJTdXBwb3J0LmNvbSJ9.u-KS8K8ENCHhI8MDEp7OOHDVfS-ArqmzTOhZaZEmoI8";
-    // }
-    // core.setToken(token);
-    // storage.clear();
-  });
-
   describe("parseHTML()", function() {
 
     it("return same html from hyperscript", function() {
@@ -550,7 +543,7 @@ describe("dom2hscript", function() {
     });
 
     it("should parse styles from html to hyperscript", function() {
-      var html = '<div style="background: url(test)">Hello world</div>';
+      var html = '<div style="color: red;">Hello world</div>';
       var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"a single style");
@@ -558,8 +551,22 @@ describe("dom2hscript", function() {
       input = dom2hscript.parseHTML(html);
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple styles");
-      
+      var background = 'data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7';
+      input = dom2hscript.parseHTML('<div style="background-image: url(' + background + ')">test</div>');
+      output = eval(input);
+      console.log(output.outerHTML);
+      expect(output.outerHTML.indexOf(background)).to.not.equal(-1,"base64 encoded image");
+
     });
+
+    it("should parse data attributes from html to hyperscript", function() {
+      var html = '<div data-test="foo">Hello world</div>';
+      var input = dom2hscript.parseHTML(html);
+      var output = eval(input);
+      expect(output.outerHTML).to.be.equal(html,"a single attribute");
+
+    });
+
 
     it("should parse nested html to hyperscript", function() {
       var html = '<div style="color: red;"><a href="#test">Hello world</a></div>';
@@ -583,23 +590,22 @@ describe("dom2hscript", function() {
 
     it("should ignore invalid html", function() {
       var html = '<div style="color: red;" asdasd=2><a href="#test">Hello world</a></div>';
-      var input = dom2hscript.parseHTML(html,true);
+      var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal('<div style="color: red;"><a href="#test">Hello world</a></div>',"a single child");
     });
 
     it("should ignore comments", function() {
       var html = '<div>Hello World<!-- Comment --></div>';
-      var input = dom2hscript.parseHTML(html,true);
+      var input = dom2hscript.parseHTML(html);
       var output = eval(input);
       expect(output.outerHTML).to.be.equal('<div>Hello World</div>',"a single child");
     });
 
     it("should parse document without errors", function() {
       var html = "<div>Hello \n world's fair " + '"ok"</div>';
-      var input = dom2hscript.parseHTML(html,true);
+      var input = dom2hscript.parseHTML(html);
       var output = eval(input);
-      console.log(output);
     });
 
     
@@ -608,5 +614,5 @@ describe("dom2hscript", function() {
 
 });
 
-},{"../index":1,"hyperscript":5}]},{},[8])(8)
+},{"../index":1,"hyperscript":3}]},{},[8])(8)
 });
