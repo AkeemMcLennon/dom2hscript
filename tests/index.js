@@ -57,7 +57,7 @@ describe("dom2hscript", function() {
       output = eval(input);
       expect(output.outerHTML).to.be.equal(html,"multiple styles");
       var background = 'data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7';
-      input = dom2hscript.parseHTML('<div style="background-image: url(' + background + ')">test</div>');
+      input = dom2hscript.parseHTML('<div style="background-image: url(\'' + background + '\')">test</div>');
       output = eval(input);
       console.log(output.outerHTML);
       expect(output.outerHTML.indexOf(background)).to.not.equal(-1,"base64 encoded image");
